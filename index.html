@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameArena - Tournament Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff4655;
+            --primary-dark: #d93a4a;
+            --secondary: #0f1923;
+            --accent: #00ff88;
+            --success: #00ff88;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --dark: #0f1923;
+            --darker: #0a0f17;
+            --light: #ffffff;
+            --gray: #768079;
+            --neon-blue: #00f0ff;
+            --neon-purple: #b967ff;
+            --border-radius: 10px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .gaming-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 70, 85, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(185, 103, 255, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(15, 25, 35, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 5px 20px rgba(255, 70, 85, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--neon-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 70, 85, 0.5);
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--light);
+            box-shadow: 0 5px 15px rgba(255, 70, 85, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 70, 85, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00cc6a);
+            color: var(--dark);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.6);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        /* Page Sections */
+        .page {
+            display: none;
+            padding: 50px 0;
+            min-height: 80vh;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            background: linear-gradient(90deg, var(--primary), var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 70, 85, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 70, 85, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 70, 85, 0.8), 0 0 40px rgba(0, 240, 255, 0.6); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #cccccc;
+        }
+
+        /* Wallet System */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+        }
+
+        .wallet-balance {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .wallet-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Tournament Cards */
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .tournament-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--neon-blue));
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tournament-game {
+            font-size: 14px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .tournament-prize {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .tournament-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .tournament-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .participants {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-details {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .pricing-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker);
+            padding: 50px 0 20px;
+            margin-top: 80px;
+            border-top: 2px solid var(--primary);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wallet-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gaming-bg"></div>
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div>GameArena</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('tournaments')">Tournaments</a></li>
+                        <li><a href="#" onclick="showPage('wallet')">Wallet</a></li>
+                        <li><a href="#" onclick="showPage('leaderboard')">Leaderboard</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="#" class="btn btn-outline" onclick="showPage('login')">Login</a>
+                    <a href="#" class="btn btn-primary" onclick="showPage('signup')">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <section id="home" class="page active">
+        <div class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>BATTLE FOR GLORY</h1>
+                    <p>Join India's Largest PUBG & Free Fire Tournament Platform</p>
+                    <div class="cta-buttons">
+                        <a href="#" class="btn btn-primary" onclick="showPage('tournaments')">Join Tournament</a>
+                        <a href="#" class="btn btn-outline" onclick="showPage('wallet')">Add Money</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tournaments Page -->
+    <section id="tournaments" class="page">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 2.5rem; color: var(--primary);">LIVE TOURNAMENTS</h2>
+            
+            <div class="tournaments-grid">
+                <!-- Tournament 1 - ₹10 Entry -->
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <span class="tournament-game">PUBG</span>
+                        <span class="tournament-prize">₹10 Entry</span>
+                    </div>
+                    <h3>PUBG Daily Tournament</h3>
+                    <div class="tournament-info">
+                        <span><i class="far fa-clock"></i> Every 6 Hours</span>
+                        <span class="participants">
+                            <i class="fas fa-users"></i> <span id="participants1">15</span>/20
+                        </span>
+                    </div>
+                    
+                    <div class="pricing-details">
+                        <div class="pricing-item">
+                            <span>Entry Fee:</span>
+                            <span>₹10</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Per Kill (All):</span>
+                            <span>₹5</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Top 3 Per Kill:</span>
+                            <span>₹7</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Winner Bonus:</span>
+                            <span>₹50</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>2nd Bonus:</span>
+                            <span>₹30</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>3rd Bonus:</span>
+                            <span>₹10</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%;" onclick="joinTournament(10, 1)">Join Tournament - ₹10</button>
+                </div>
+
+                <!-- Tournament 2 - ₹20 Entry -->
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <span class="tournament-game">FREE FIRE</span>
+                        <span class="tournament-prize">₹20 Entry</span>
+                    </div>
+                    <h3>Free Fire Pro Tournament</h3>
+                    <div class="tournament-info">
+                        <span><i class="far fa-clock"></i> Every 6 Hours</span>
+                        <span class="participants">
+                            <i class="fas fa-users"></i> <span id="participants2">18</span>/20
+                        </span>
+                    </div>
+                    
+                    <div class="pricing-details">
+                        <div class="pricing-item">
+                            <span>Entry Fee:</span>
+                            <span>₹20</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Per Kill (All):</span>
+                            <span>₹10</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Top 3 Per Kill:</span>
+                            <span>₹14</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Winner Bonus:</span>
+                            <span>₹100</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>2nd Bonus:</span>
+                            <span>₹60</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>3rd Bonus:</span>
+                            <span>₹20</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%;" onclick="joinTournament(20, 2)">Join Tournament - ₹20</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wallet Page -->
+    <section id="wallet" class="page">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 2.5rem; color: var(--primary);">MY WALLET</h2>
+            
+            <div class="wallet-card">
+                <div class="wallet-balance">
+                    ₹<span id="walletBalance">0</span>
+                </div>
+                
+                <div class="wallet-actions">
+                    <button class="btn btn-primary" onclick="showModal('depositModal')">
+                        <i class="fas fa-plus"></i> Add Money
+                    </button>
+                    <button class="btn btn-outline" onclick="showModal('withdrawModal')">
+                        <i class="fas fa-rupee-sign"></i> Withdraw
+                    </button>
+                </div>
+            </div>
+
+            <h3 style="margin: 40px 0 20px; color: var(--primary);">Transaction History</h3>
+            <div id="transactionHistory" style="color: var(--gray);">
+                No transactions yet
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Pages -->
+    <section id="login" class="page">
+        <div class="container">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary);">LOGIN</h2>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="form-control" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Enter password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="login()">Login</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="signup" class="page">
+        <div class="container">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary);">REGISTER</h2>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="form-control" placeholder="Choose username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Create password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="signup()">Create Account</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deposit Modal -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Money to Wallet</h2>
+                <button class="close-modal" onclick="closeModal('depositModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Amount (₹)</label>
+                <input type="number" class="form-control" id="depositAmount" placeholder="Enter amount" min="10">
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select class="form-control">
+                    <option>UPI</option>
+                    <option>PayTM</option>
+                    <option>PhonePe</option>
+                    <option>Credit Card</option>
+                </select>
+            </div>
+            <button class="btn btn-success" style="width: 100%;" onclick="depositMoney()">Add Money</button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Withdraw Money</h2>
+                <button class="close-modal" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Amount (₹)</label>
+                <input type="number" class="form-control" id="withdrawAmount" placeholder="Enter amount">
+            </div>
+            <div class="form-group">
+                <label>UPI ID</label>
+                <input type="text" class="form-control" placeholder="Enter UPI ID">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="withdrawMoney()">Withdraw</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>GameArena</h3>
+                    <p>India's premier gaming tournament platform.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('tournaments')">Tournaments</a></li>
+                        <li><a href="#" onclick="showPage('wallet')">Wallet</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Rules</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--gray);">
+                <p>&copy; 2024 GameArena. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // User Data
+        let userData = {
+            wallet: 0,
+            transactions: []
+        };
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            updateWalletDisplay();
+        }
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Wallet Functions
+        function updateWalletDisplay() {
+            document.getElementById('walletBalance').textContent = userData.wallet;
+            
+            // Update transaction history
+            const historyElement = document.getElementById('transactionHistory');
+            if (userData.transactions.length === 0) {
+                historyElement.innerHTML = 'No transactions yet';
+            } else {
+                historyElement.innerHTML = userData.transactions.map(transaction => 
+                    `<div style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        ${transaction.type === 'deposit' ? '💰 Added' : '🎮 Tournament'} - ₹${transaction.amount} - ${transaction.time}
+                    </div>`
+                ).join('');
+            }
+        }
+
+        function depositMoney() {
+            const amount = parseInt(document.getElementById('depositAmount').value);
+            if (amount >= 10) {
+                userData.wallet += amount;
+                userData.transactions.unshift({
+                    type: 'deposit',
+                    amount: amount,
+                    time: new Date().toLocaleTimeString()
+                });
+                updateWalletDisplay();
+                closeModal('depositModal');
+                alert(`₹${amount} added to your wallet successfully!`);
+            } else {
+                alert('Minimum deposit amount is ₹10');
+            }
+        }
+
+        function withdrawMoney() {
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            if (amount <= userData.wallet) {
+                userData.wallet -= amount;
+                userData.transactions.unshift({
+                    type: 'withdraw',
+                    amount: amount,
+                    time: new Date().toLocaleTimeString()
+                });
+                updateWalletDisplay();
+                closeModal('withdrawModal');
+                alert(`₹${amount} withdrawal request submitted!`);
+            } else {
+                alert('Insufficient balance in wallet');
+            }
+        }
+
+        // Tournament Functions
+        function joinTournament(entryFee, tournamentId) {
+            if (userData.wallet >= entryFee) {
+                userData.wallet -= entryFee;
+                userData.transactions.unshift({
+                    type: 'tournament',
+                    amount: entryFee,
+                    time: new Date().toLocaleTimeString()
+                });
+                
+                // Update participants count
+                const participantsElement = document.getElementById(`participants${tournamentId}`);
+                let currentParticipants = parseInt(participantsElement.textContent.split('/')[0]);
+                participantsElement.textContent = `${currentParticipants + 1}/20`;
+                
+                updateWalletDisplay();
+                alert(`Successfully joined tournament! ₹${entryFee} deducted from wallet.`);
+                
+                // Check if tournament can start (minimum 8 participants)
+                if (currentParticipants + 1 >= 8) {
+                    setTimeout(() => {
+                        alert('Tournament is starting now! Room details will be shared shortly.');
+                    }, 1000);
+                }
+            } else {
+                alert(`Insufficient balance! You need ₹${entryFee} to join this tournament.`);
+                showPage('wallet');
+            }
+        }
+
+        // Auto tournament creation every 6 hours
+        function startAutoTournaments() {
+            setInterval(() => {
+                // Reset participant counts
+                document.getElementById('participants1').textContent = '0/20';
+                document.getElementById('participants2').textContent = '0/20';
+                alert('New tournaments have started! Join now!');
+            }, 6 * 60 * 60 * 1000); // 6 hours
+        }
+
+        // Start auto tournaments when page loads
+        window.onload = function() {
+            startAutoTournaments();
+        };
+
+        // Auth Functions
+        function login() {
+            alert('Login successful!');
+            showPage('home');
+        }
+
+        function signup() {
+            alert('Account created successfully!');
+            showPage('home');
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameArena - Tournament Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff4655;
+            --primary-dark: #d93a4a;
+            --secondary: #0f1923;
+            --accent: #00ff88;
+            --success: #00ff88;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --dark: #0f1923;
+            --darker: #0a0f17;
+            --light: #ffffff;
+            --gray: #768079;
+            --neon-blue: #00f0ff;
+            --neon-purple: #b967ff;
+            --border-radius: 10px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .gaming-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 70, 85, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(185, 103, 255, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(15, 25, 35, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 5px 20px rgba(255, 70, 85, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--neon-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 70, 85, 0.5);
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--light);
+            box-shadow: 0 5px 15px rgba(255, 70, 85, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 70, 85, 0.6);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00cc6a);
+            color: var(--dark);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.6);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--light);
+        }
+
+        /* Page Sections */
+        .page {
+            display: none;
+            padding: 50px 0;
+            min-height: 80vh;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            background: linear-gradient(90deg, var(--primary), var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 70, 85, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 70, 85, 0.5); }
+            to { text-shadow: 0 0 30px rgba(255, 70, 85, 0.8), 0 0 40px rgba(0, 240, 255, 0.6); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #cccccc;
+        }
+
+        /* Wallet System */
+        .wallet-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+        }
+
+        .wallet-balance {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .wallet-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Tournament Cards */
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .tournament-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--neon-blue));
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tournament-game {
+            font-size: 14px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+
+        .tournament-prize {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .tournament-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .tournament-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .participants {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-details {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .pricing-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker);
+            padding: 50px 0 20px;
+            margin-top: 80px;
+            border-top: 2px solid var(--primary);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+            
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wallet-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gaming-bg"></div>
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div>GameArena</div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('tournaments')">Tournaments</a></li>
+                        <li><a href="#" onclick="showPage('wallet')">Wallet</a></li>
+                        <li><a href="#" onclick="showPage('leaderboard')">Leaderboard</a></li>
+                    </ul>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="#" class="btn btn-outline" onclick="showPage('login')">Login</a>
+                    <a href="#" class="btn btn-primary" onclick="showPage('signup')">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <section id="home" class="page active">
+        <div class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>BATTLE FOR GLORY</h1>
+                    <p>Join India's Largest PUBG & Free Fire Tournament Platform</p>
+                    <div class="cta-buttons">
+                        <a href="#" class="btn btn-primary" onclick="showPage('tournaments')">Join Tournament</a>
+                        <a href="#" class="btn btn-outline" onclick="showPage('wallet')">Add Money</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tournaments Page -->
+    <section id="tournaments" class="page">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 2.5rem; color: var(--primary);">LIVE TOURNAMENTS</h2>
+            
+            <div class="tournaments-grid">
+                <!-- Tournament 1 - ₹10 Entry -->
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <span class="tournament-game">PUBG</span>
+                        <span class="tournament-prize">₹10 Entry</span>
+                    </div>
+                    <h3>PUBG Daily Tournament</h3>
+                    <div class="tournament-info">
+                        <span><i class="far fa-clock"></i> Every 6 Hours</span>
+                        <span class="participants">
+                            <i class="fas fa-users"></i> <span id="participants1">15</span>/20
+                        </span>
+                    </div>
+                    
+                    <div class="pricing-details">
+                        <div class="pricing-item">
+                            <span>Entry Fee:</span>
+                            <span>₹10</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Per Kill (All):</span>
+                            <span>₹5</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Top 3 Per Kill:</span>
+                            <span>₹7</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Winner Bonus:</span>
+                            <span>₹50</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>2nd Bonus:</span>
+                            <span>₹30</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>3rd Bonus:</span>
+                            <span>₹10</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%;" onclick="joinTournament(10, 1)">Join Tournament - ₹10</button>
+                </div>
+
+                <!-- Tournament 2 - ₹20 Entry -->
+                <div class="tournament-card">
+                    <div class="tournament-header">
+                        <span class="tournament-game">FREE FIRE</span>
+                        <span class="tournament-prize">₹20 Entry</span>
+                    </div>
+                    <h3>Free Fire Pro Tournament</h3>
+                    <div class="tournament-info">
+                        <span><i class="far fa-clock"></i> Every 6 Hours</span>
+                        <span class="participants">
+                            <i class="fas fa-users"></i> <span id="participants2">18</span>/20
+                        </span>
+                    </div>
+                    
+                    <div class="pricing-details">
+                        <div class="pricing-item">
+                            <span>Entry Fee:</span>
+                            <span>₹20</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Per Kill (All):</span>
+                            <span>₹10</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Top 3 Per Kill:</span>
+                            <span>₹14</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>Winner Bonus:</span>
+                            <span>₹100</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>2nd Bonus:</span>
+                            <span>₹60</span>
+                        </div>
+                        <div class="pricing-item">
+                            <span>3rd Bonus:</span>
+                            <span>₹20</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%;" onclick="joinTournament(20, 2)">Join Tournament - ₹20</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wallet Page -->
+    <section id="wallet" class="page">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 2.5rem; color: var(--primary);">MY WALLET</h2>
+            
+            <div class="wallet-card">
+                <div class="wallet-balance">
+                    ₹<span id="walletBalance">0</span>
+                </div>
+                
+                <div class="wallet-actions">
+                    <button class="btn btn-primary" onclick="showModal('depositModal')">
+                        <i class="fas fa-plus"></i> Add Money
+                    </button>
+                    <button class="btn btn-outline" onclick="showModal('withdrawModal')">
+                        <i class="fas fa-rupee-sign"></i> Withdraw
+                    </button>
+                </div>
+            </div>
+
+            <h3 style="margin: 40px 0 20px; color: var(--primary);">Transaction History</h3>
+            <div id="transactionHistory" style="color: var(--gray);">
+                No transactions yet
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Pages -->
+    <section id="login" class="page">
+        <div class="container">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary);">LOGIN</h2>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="form-control" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Enter password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="login()">Login</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="signup" class="page">
+        <div class="container">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary);">REGISTER</h2>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" class="form-control" placeholder="Choose username">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Create password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="signup()">Create Account</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deposit Modal -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Money to Wallet</h2>
+                <button class="close-modal" onclick="closeModal('depositModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Amount (₹)</label>
+                <input type="number" class="form-control" id="depositAmount" placeholder="Enter amount" min="10">
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select class="form-control">
+                    <option>UPI</option>
+                    <option>PayTM</option>
+                    <option>PhonePe</option>
+                    <option>Credit Card</option>
+                </select>
+            </div>
+            <button class="btn btn-success" style="width: 100%;" onclick="depositMoney()">Add Money</button>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdrawModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Withdraw Money</h2>
+                <button class="close-modal" onclick="closeModal('withdrawModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Amount (₹)</label>
+                <input type="number" class="form-control" id="withdrawAmount" placeholder="Enter amount">
+            </div>
+            <div class="form-group">
+                <label>UPI ID</label>
+                <input type="text" class="form-control" placeholder="Enter UPI ID">
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="withdrawMoney()">Withdraw</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>GameArena</h3>
+                    <p>India's premier gaming tournament platform.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" onclick="showPage('tournaments')">Tournaments</a></li>
+                        <li><a href="#" onclick="showPage('wallet')">Wallet</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Rules</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--gray);">
+                <p>&copy; 2024 GameArena. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // User Data
+        let userData = {
+            wallet: 0,
+            transactions: []
+        };
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            updateWalletDisplay();
+        }
+
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Wallet Functions
+        function updateWalletDisplay() {
+            document.getElementById('walletBalance').textContent = userData.wallet;
+            
+            // Update transaction history
+            const historyElement = document.getElementById('transactionHistory');
+            if (userData.transactions.length === 0) {
+                historyElement.innerHTML = 'No transactions yet';
+            } else {
+                historyElement.innerHTML = userData.transactions.map(transaction => 
+                    `<div style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        ${transaction.type === 'deposit' ? '💰 Added' : '🎮 Tournament'} - ₹${transaction.amount} - ${transaction.time}
+                    </div>`
+                ).join('');
+            }
+        }
+
+        function depositMoney() {
+            const amount = parseInt(document.getElementById('depositAmount').value);
+            if (amount >= 10) {
+                userData.wallet += amount;
+                userData.transactions.unshift({
+                    type: 'deposit',
+                    amount: amount,
+                    time: new Date().toLocaleTimeString()
+                });
+                updateWalletDisplay();
+                closeModal('depositModal');
+                alert(`₹${amount} added to your wallet successfully!`);
+            } else {
+                alert('Minimum deposit amount is ₹10');
+            }
+        }
+
+        function withdrawMoney() {
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            if (amount <= userData.wallet) {
+                userData.wallet -= amount;
+                userData.transactions.unshift({
+                    type: 'withdraw',
+                    amount: amount,
+                    time: new Date().toLocaleTimeString()
+                });
+                updateWalletDisplay();
+                closeModal('withdrawModal');
+                alert(`₹${amount} withdrawal request submitted!`);
+            } else {
+                alert('Insufficient balance in wallet');
+            }
+        }
+
+        // Tournament Functions
+        function joinTournament(entryFee, tournamentId) {
+            if (userData.wallet >= entryFee) {
+                userData.wallet -= entryFee;
+                userData.transactions.unshift({
+                    type: 'tournament',
+                    amount: entryFee,
+                    time: new Date().toLocaleTimeString()
+                });
+                
+                // Update participants count
+                const participantsElement = document.getElementById(`participants${tournamentId}`);
+                let currentParticipants = parseInt(participantsElement.textContent.split('/')[0]);
+                participantsElement.textContent = `${currentParticipants + 1}/20`;
+                
+                updateWalletDisplay();
+                alert(`Successfully joined tournament! ₹${entryFee} deducted from wallet.`);
+                
+                // Check if tournament can start (minimum 8 participants)
+                if (currentParticipants + 1 >= 8) {
+                    setTimeout(() => {
+                        alert('Tournament is starting now! Room details will be shared shortly.');
+                    }, 1000);
+                }
+            } else {
+                alert(`Insufficient balance! You need ₹${entryFee} to join this tournament.`);
+                showPage('wallet');
+            }
+        }
+
+        // Auto tournament creation every 6 hours
+        function startAutoTournaments() {
+            setInterval(() => {
+                // Reset participant counts
+                document.getElementById('participants1').textContent = '0/20';
+                document.getElementById('participants2').textContent = '0/20';
+                alert('New tournaments have started! Join now!');
+            }, 6 * 60 * 60 * 1000); // 6 hours
+        }
+
+        // Start auto tournaments when page loads
+        window.onload = function() {
+            startAutoTournaments();
+        };
+
+        // Auth Functions
+        function login() {
+            alert('Login successful!');
+            showPage('home');
+        }
+
+        function signup() {
+            alert('Account created successfully!');
+            showPage('home');
+        }
+    </script>
+</body>
+</html>
